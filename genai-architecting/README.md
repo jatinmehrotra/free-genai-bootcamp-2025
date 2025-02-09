@@ -1,8 +1,3 @@
-
-
-
-
-
 ## Business Requirements
 
 - Japanese Language School wants to extend the language and improve the learning experience for students between instructor-led classes for their existing learning portal and learning record store.
