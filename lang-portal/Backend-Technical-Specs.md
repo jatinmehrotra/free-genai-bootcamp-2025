@@ -49,34 +49,273 @@ A language learning school wants to build a prototype of learning portal which w
   - correct boolean
   - created_at datetime
 
+## API Endpoints
 
-  ## API Endpoints
+### Dashboard Endpoints
 
-- Dashboard
-  - `GET /api/dashboard/last-study-sessions/`
-  - `GET /api/dashboard/stats`
-  - `GET /api/dashboard/study-progress`
-- Study Activities
-  - `GET /api/study-activities/:id`
-  - `GET /api/study-activities/:id/study_sessions`
-  - `POST /api/study-activities/`
-    - required params: group_id, study_activity_id
-- Words
-  - `GET /api/words`
-    - Pagination with 100 items per page
-  - `GET /api/words/:id`
-- Groups
-  - `GET /api/groups`
-    - Pagination with 100 items per page
-  - `GET /api/groups/:id`
-  - `GET /api/groups/:id/words`
-  - `GET /api/groups/:id/study-sessions`
-- Sessions
-  - `GET /api/study-sessions/:id`
-  - `GET /api/study-sessions/:id/words`
-- Settings
-  - `POST /api/reset_history`
-  - `POST /api/full_reset`
+#### `GET /api/dashboard/last-study-sessions/`
+Returns the most recent study sessions.
+```json
+{
+  "study_sessions": [
+    {
+      "id": 1,
+      "group_id": 1,
+      "group_name": "Basic Greetings",
+      "created_at": "2025-02-14T10:30:00Z",
+      "study_activity_id": 1,
+      "total_words": 10,
+      "correct_count": 8
+    }
+  ]
+}
+```
 
-- POST /api/study_sessions/:id/words/:word_id/review
-  - required params: correct
+#### `GET /api/dashboard/stats`
+Returns overall study statistics.
+```json
+{
+  "total_words_studied": 150,
+  "total_correct": 120,
+  "total_sessions": 15,
+  "accuracy_rate": 80.0,
+  "groups_studied": 5
+}
+```
+
+#### `GET /api/dashboard/study-progress`
+Returns study progress over time.
+```json
+{
+  "daily_progress": [
+    {
+      "date": "2025-02-14",
+      "words_studied": 20,
+      "correct_count": 15
+    }
+  ]
+}
+```
+
+### Study Activities Endpoints
+
+#### `GET /api/study-activities/:id`
+Returns details of a specific study activity.
+```json
+{
+  "id": 1,
+  "study_session_id": 1,
+  "group_id": 1,
+  "created_at": "2025-02-14T10:30:00Z",
+  "total_words": 10,
+  "completed_words": 8
+}
+```
+
+#### `GET /api/study-activities/:id/study_sessions`
+Returns all study sessions for a specific activity.
+```json
+{
+  "study_sessions": [
+    {
+      "id": 1,
+      "created_at": "2025-02-14T10:30:00Z",
+      "total_words": 10,
+      "correct_count": 8
+    }
+  ]
+}
+```
+
+#### `POST /api/study-activities/`
+Creates a new study activity.
+Required params: group_id, study_activity_id
+```json
+{
+  "id": 1,
+  "group_id": 1,
+  "study_activity_id": 1,
+  "created_at": "2025-02-14T10:30:00Z"
+}
+```
+
+### Words Endpoints
+
+#### `GET /api/words`
+Returns paginated list of words.
+```json
+{
+  "words": [
+    {
+      "id": 1,
+      "japanese": "こんにちは",
+      "romaji": "konnichiwa",
+      "english": "hello",
+      "parts": {
+        "type": "greeting",
+        "formality": "neutral"
+      }
+    }
+  ],
+  "page": 1,
+  "total_pages": 10,
+  "total_items": 1000
+}
+```
+
+#### `GET /api/words/:id`
+Returns details of a specific word.
+```json
+{
+  "id": 1,
+  "japanese": "こんにちは",
+  "romaji": "konnichiwa",
+  "english": "hello",
+  "parts": {
+    "type": "greeting",
+    "formality": "neutral"
+  },
+  "groups": [
+    {
+      "id": 1,
+      "name": "Basic Greetings"
+    }
+  ]
+}
+```
+
+### Groups Endpoints
+
+#### `GET /api/groups`
+Returns paginated list of groups.
+```json
+{
+  "groups": [
+    {
+      "id": 1,
+      "name": "Basic Greetings",
+      "word_count": 10
+    }
+  ],
+  "page": 1,
+  "total_pages": 5,
+  "total_items": 500
+}
+```
+
+#### `GET /api/groups/:id`
+Returns details of a specific group.
+```json
+{
+  "id": 1,
+  "name": "Basic Greetings",
+  "word_count": 10,
+  "last_studied": "2025-02-14T10:30:00Z",
+  "study_sessions_count": 5
+}
+```
+
+#### `GET /api/groups/:id/words`
+Returns all words in a specific group.
+```json
+{
+  "group_id": 1,
+  "group_name": "Basic Greetings",
+  "words": [
+    {
+      "id": 1,
+      "japanese": "こんにちは",
+      "romaji": "konnichiwa",
+      "english": "hello",
+      "parts": {
+        "type": "greeting",
+        "formality": "neutral"
+      }
+    }
+  ]
+}
+```
+
+#### `GET /api/groups/:id/study-sessions`
+Returns study sessions for a specific group.
+```json
+{
+  "group_id": 1,
+  "study_sessions": [
+    {
+      "id": 1,
+      "created_at": "2025-02-14T10:30:00Z",
+      "total_words": 10,
+      "correct_count": 8
+    }
+  ]
+}
+```
+
+### Sessions Endpoints
+
+#### `GET /api/study-sessions/:id`
+Returns details of a specific study session.
+```json
+{
+  "id": 1,
+  "group_id": 1,
+  "created_at": "2025-02-14T10:30:00Z",
+  "total_words": 10,
+  "correct_count": 8,
+  "accuracy_rate": 80.0
+}
+```
+
+#### `GET /api/study-sessions/:id/words`
+Returns words reviewed in a specific study session.
+```json
+{
+  "session_id": 1,
+  "words": [
+    {
+      "word_id": 1,
+      "japanese": "こんにちは",
+      "romaji": "konnichiwa",
+      "english": "hello",
+      "correct": true,
+      "reviewed_at": "2025-02-14T10:30:00Z"
+    }
+  ]
+}
+```
+
+### Review Endpoints
+
+#### `POST /api/study_sessions/:id/words/:word_id/review`
+Records a word review result.
+Required params: correct
+```json
+{
+  "session_id": 1,
+  "word_id": 1,
+  "correct": true,
+  "created_at": "2025-02-14T10:30:00Z"
+}
+```
+
+### Settings Endpoints
+
+#### `POST /api/reset_history`
+Resets all study history.
+```json
+{
+  "success": true,
+  "message": "Study history has been reset",
+  "reset_at": "2025-02-14T10:30:00Z"
+}
+```
+
+#### `POST /api/full_reset`
+Resets all data including words and groups.
+```json
+{
+  "success": true,
+  "message": "All data has been reset",
+  "reset_at": "2025-02-14T10:30:00Z"
+}
